@@ -1,5 +1,7 @@
 # SecTool — Questionnaire Automation
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 SecTool helps security teams answer questionnaires faster through AI-powered answering, a reusable answer library, and automated document processing.
 
 ## Architecture Overview
@@ -130,3 +132,7 @@ End-to-end LLM/RAG answer quality has not been systematically tested. Areas that
 - [ ] Rerank effectiveness — currently implicit (top-K by similarity); a dedicated reranker is not implemented
 - [ ] Prompt tuning — the system prompt may need iteration for different questionnaire styles (CAIQ, SIG, custom)
 - [ ] Latency profiling — embedding + retrieval + LLM round-trip under realistic document counts
+
+## License
+
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
