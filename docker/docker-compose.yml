@@ -1,0 +1,75 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: sectool
+      POSTGRES_PASSWORD: sectool
+      POSTGRES_DB: sectool
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sectool"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  rustfs:
+    image: docker.io/rustfs/rustfs:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - rustfs_data:/data
+
+  kreuzberg:
+    image: ghcr.io/kreuzberg-dev/kreuzberg:latest
+    ports:
+      - "7777:7777"
+    command: ["serve", "--host", "0.0.0.0", "--port", "7777"]
+
+  sectool-api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.api
+    ports:
+      - "8080:8080"
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/sectool?useSSL=false
+      DATABASE_USERNAME: sectool
+      DATABASE_PASSWORD: sectool
+      JWT_SECRET: sectool-dev-secret-key-change-in-production-must-be-at-least-256-bits-long!!
+      S3_ENDPOINT: http://rustfs:9000
+      S3_ACCESS_KEY: rustfsadmin
+      S3_SECRET_KEY: rustfsadmin
+      S3_BUCKET: sectool
+      KREUZBERG_URL: http://kreuzberg:7777
+      LLM_BASE_URL: http://localhost:11434
+      LLM_MODEL: "qwen3:8b"
+      EMBEDDINGS_BASE_URL: http://localhost:11434
+      EMBEDDINGS_MODEL: "qwen3-embedding:0.6b"
+      EMBEDDINGS_DIMENSIONS: "1024"
+      APP_ENV: dev
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rustfs:
+        condition: service_started
+      kreuzberg:
+        condition: service_started
+
+  sectool-web:
+    build:
+      context: ../web
+      dockerfile: ../docker/Dockerfile.web
+    ports:
+      - "3000:80"
+    environment:
+      VITE_API_URL: http://localhost:8080/todos-api
+    depends_on:
+      - sectool-api
+
+volumes:
+  pgdata:
+  rustfs_data:
