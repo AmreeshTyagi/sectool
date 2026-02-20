@@ -15,7 +15,7 @@ public class EmbeddingsClientFactory {
             @Value("${sectool.embeddings.model}") String model,
             @Value("${sectool.embeddings.dimensions}") int dimensions) {
         return switch (provider.toLowerCase()) {
-            case "openai", "anthropic" -> new OpenAiEmbeddingsClient(baseUrl, apiKey, model, dimensions);
+            case "anthropic", "voyage", "openai" -> new OpenAiEmbeddingsClient(baseUrl, apiKey, model, dimensions);
             default -> new OllamaEmbeddingsClient(baseUrl, model, dimensions);
         };
     }

@@ -14,7 +14,8 @@ public class LlmClientFactory {
             @Value("${sectool.llm.api-key:}") String apiKey,
             @Value("${sectool.llm.model}") String model) {
         return switch (provider.toLowerCase()) {
-            case "openai", "anthropic" -> new OpenAiLlmClient(baseUrl, apiKey, model);
+            case "anthropic" -> new AnthropicLlmClient(baseUrl, apiKey, model);
+            case "openai" -> new OpenAiLlmClient(baseUrl, apiKey, model);
             default -> new OllamaLlmClient(baseUrl, model);
         };
     }

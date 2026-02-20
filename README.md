@@ -80,12 +80,22 @@ Environment variables are pre-configured for local development in the `Makefile`
 | `S3_ACCESS_KEY`       | `rustfsadmin`                    | S3 access key                      |
 | `S3_SECRET_KEY`       | `rustfsadmin`                    | S3 secret key                      |
 | `KREUZBERG_URL`       | `http://localhost:7777`          | Document parsing service           |
-| `LLM_BASE_URL`       | `http://localhost:11434`         | Ollama LLM endpoint               |
-| `LLM_MODEL`          | `qwen3:8b`                       | LLM model name                     |
-| `EMBEDDINGS_BASE_URL` | `http://localhost:11434`        | Ollama embeddings endpoint         |
-| `EMBEDDINGS_MODEL`   | `qwen3-embedding:0.6b`           | Embeddings model name              |
+| `LLM_PROVIDER`       | `anthropic`                      | LLM provider (`anthropic`, `openai`, `ollama`) |
+| `LLM_API_KEY`        | _(none)_                         | API key (required for anthropic/openai) |
+| `LLM_BASE_URL`       | `https://api.anthropic.com`      | LLM API base URL                   |
+| `LLM_MODEL`          | `claude-sonnet-4-20250514`              | LLM model name                     |
+| `EMBEDDINGS_PROVIDER` | `anthropic`                     | Embeddings provider (`anthropic`/`voyage`, `openai`, `ollama`) |
+| `EMBEDDINGS_API_KEY` | _(none)_                         | Voyage AI API key (required for anthropic/voyage) |
+| `EMBEDDINGS_BASE_URL` | `https://api.voyageai.com`      | Embeddings API base URL            |
+| `EMBEDDINGS_MODEL`   | `voyage-3.5`                  | Embeddings model name              |
 | `EMBEDDINGS_DIMENSIONS` | `1024`                        | Embedding vector size              |
 
+> **API keys:** Export `ANTHROPIC_API_KEY` and `VOYAGE_API_KEY` in your shell before running `make dev`. The Makefile reads them automatically. Alternatively, set `LLM_API_KEY` and `EMBEDDINGS_API_KEY` directly.
+>
+> **Voyage AI embeddings:** Anthropic recommends [Voyage AI](https://platform.claude.com/docs/en/build-with-claude/embeddings) for embeddings. Available models: `voyage-3.5` (best quality), `voyage-3.5` (balanced), `voyage-3.5-lite` (lowest latency), `voyage-code-3` (code). Sign up at [voyageai.com](https://www.voyageai.com/) for an API key.
+>
+> **Switching to Ollama:** Set `LLM_PROVIDER=ollama LLM_BASE_URL=http://localhost:11434 LLM_MODEL=qwen3:8b` for LLM, and `EMBEDDINGS_PROVIDER=ollama EMBEDDINGS_BASE_URL=http://localhost:11434 EMBEDDINGS_MODEL=qwen3-embedding:0.6b` for embeddings.
+>
 > **Ollama networking note:** If Ollama is running directly on your host (not in Docker), `http://localhost:11434` works for `make dev` since the backend also runs on the host. However, if the backend runs inside a Docker/Podman container (`make build`), `localhost` inside the container refers to the container itself — not the host. In that case, use your host's LAN IP instead (e.g. `http://192.168.1.x:11434`).
 
 ## Project Structure

@@ -3,6 +3,9 @@
 PROJECT_ROOT := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 COMPOSE_FILE := $(PROJECT_ROOT)/docker/docker-compose.yml
 
+-include $(PROJECT_ROOT)/.env
+export
+
 # --- Main targets ---
 
 ## Start everything: infra containers + backend (hot-reload) + frontend (HMR)
@@ -26,10 +29,14 @@ dev-api:
 	S3_SECRET_KEY=rustfsadmin \
 	S3_BUCKET=sectool \
 	KREUZBERG_URL=http://localhost:7777 \
-	LLM_BASE_URL=http://localhost:11434 \
-	LLM_MODEL="qwen3:8b" \
-	EMBEDDINGS_BASE_URL=http://localhost:11434 \
-	EMBEDDINGS_MODEL="qwen3-embedding:0.6b" \
+	LLM_PROVIDER=anthropic \
+	LLM_BASE_URL=https://api.anthropic.com \
+	LLM_API_KEY=$(ANTHROPIC_API_KEY) \
+	LLM_MODEL="claude-sonnet-4-20250514" \
+	EMBEDDINGS_PROVIDER=anthropic \
+	EMBEDDINGS_BASE_URL=https://api.voyageai.com \
+	EMBEDDINGS_API_KEY=$(VOYAGE_API_KEY) \
+	EMBEDDINGS_MODEL="voyage-3.5" \
 	EMBEDDINGS_DIMENSIONS=1024 \
 	APP_ENV=dev \
 	$(PROJECT_ROOT)/mvnw -f $(PROJECT_ROOT)/pom.xml spring-boot:run
